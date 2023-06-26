@@ -187,7 +187,16 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2023-06-26 10:30:19 / 修改时间：15:23:45" itemprop="dateCreated datePublished" datetime="2023-06-26T10:30:19+08:00">2023-06-26</time>
+              <time title="创建时间：2023-06-26 10:30:19 / 修改时间：15:47:41" itemprop="dateCreated datePublished" datetime="2023-06-26T10:30:19+08:00">2023-06-26</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/YOLOv3SPP/" itemprop="url" rel="index"><span itemprop="name">YOLOv3SPP</span></a>
+                </span>
             </span>
 
           
@@ -231,6 +240,36 @@
 <div align="center">
 <img src="/2023/06/26/test/image-3.png">
 </div>
+
+<h2 id="回归参数的获得"><a href="#回归参数的获得" class="headerlink" title="回归参数的获得"></a>回归参数的获得</h2><p>　　通过计算正样本先验框与ground truth边界框之间的偏移和缩放比例获得，并作为目标值训练网络。通过最小化回归损失，网络可以调整先验框位置和尺寸，使其更准确的预测目标的位置。</p>
+<h2 id="回归公式"><a href="#回归公式" class="headerlink" title="回归公式"></a>回归公式</h2><p>　　回归是在每个检测层的后处理阶段进行的。假设先验框的中心坐标为（x,y），宽为pw,高为ph，预测的回归值为（tx,ty,tw,th），则调整后的边界框位置（即bounding box）如下：</p>
+<div align="center">
+<img src="/2023/06/26/test/image-5.png">
+</div>
+
+<h1 id="损失计算"><a href="#损失计算" class="headerlink" title="损失计算"></a>损失计算</h1><div align="center">
+<img src="/2023/06/26/test/image-6.png">
+</div>
+
+<h2 id="定位损失"><a href="#定位损失" class="headerlink" title="定位损失"></a>定位损失</h2><p>度量了预测的边界框与实际目标边界框间的差异，yolov3-spp网络中使用均方根误差作为定位损失函数</p>
+<div align="center">
+<img src="/2023/06/26/test/95c9b8af8596e97e89a3fa5481abfd8.jpg">
+</div>
+
+<h2 id="分类损失"><a href="#分类损失" class="headerlink" title="分类损失"></a>分类损失</h2><p>度量了目标类别的预测概率与实际类别之间的差异，该网络中使用二值交叉熵损失函数作为分类损失函数</p>
+<div align="center">
+<img src="/2023/06/26/test/image-7.png">
+</div>
+
+<p>其中O(i，j)表示预测目标边界i中是否存在第j类目标，Cij为预测值Npos为正样本的个数。</p>
+<h2 id="目标置信度损失"><a href="#目标置信度损失" class="headerlink" title="目标置信度损失"></a>目标置信度损失</h2><p>度量了预测的边界框是否包含目标对象的准确性。该网络使用二值交叉熵损失作为目标置信度损失函数。</p>
+<div align="center">
+<img src="/2023/06/26/test/a39a1379ea960d391f55f65826c0598.jpg">
+</div>
+
+<p>其中Oi表示预测边界框与真实边界框的IOU，c为预测值ci^为c通过sigmoid函数得到的预测置信度，N为正负样本总数。</p>
+<hr>
+<p><em>本文参考b站up主霹雳吧啦wz的视频</em> <a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1yi4y1g7ro/?spm_id_from=333.999.0.0">YOLO系列理论合集</a> </p>
 
       
     </div>
@@ -568,7 +607,7 @@
   </div>
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共2.7k字</span>
+  <span class="post-count">博客全站共3.1k字</span>
 </div>
 
     <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>

@@ -187,7 +187,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2023-06-26 10:30:19 / 修改时间：15:52:11" itemprop="dateCreated datePublished" datetime="2023-06-26T10:30:19+08:00">2023-06-26</time>
+              <time title="创建时间：2023-06-26 10:30:19 / 修改时间：18:38:07" itemprop="dateCreated datePublished" datetime="2023-06-26T10:30:19+08:00">2023-06-26</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -239,7 +239,7 @@
 
 <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>在这篇文章中主要讲解一下YOLOv3SPP网络的原理，以及部分有关目标检测的原理<br>p:有些地方讲述可能不太准确，仅做参考</p>
 <h1 id="YOLOV3spp网络结构"><a href="#YOLOV3spp网络结构" class="headerlink" title="YOLOV3spp网络结构"></a>YOLOV3spp网络结构</h1><div align="center">
-<img src="/2023/06/26/test/yolov3spp.png">
+<img src="/2023/06/26/test/yolov3spp.jpg">
 </div>
 
 <p>网络对图片的处理流程如下：</p>
@@ -249,8 +249,8 @@
 
 <h2 id="结构1"><a href="#结构1" class="headerlink" title="结构1"></a>结构1</h2><p>Backbone: 采用Darknet53，输入图片经过backbone得到输出的特征矩阵。</p>
 <h2 id="结构2"><a href="#结构2" class="headerlink" title="结构2"></a>结构2</h2><p>SPP结构：将特征矩阵和经过下采样的三个矩阵进行拼接（注意，不是相加）<br>优点：spp是一种池化操作，用于处理特征图的不同空间大小。其优点是可以融合不同尺度的特征信息，使网络更容易得到收敛。</p>
-<h2 id="结构3"><a href="#结构3" class="headerlink" title="结构3"></a>结构3</h2><p>　　结构3，4，5为YOLOV3spp网络的三个预测特征层，用于预<br>测不同尺度的目标，其中3预测尺度较大的目标，4预测中等的目标，5预测尺度较小的目标，5的感受野较小。<br>　　网络将提取到的特征图传递给特征预测层进行预测。由预<br>测器预测回归参数以及类别和confidence。</p>
-<h2 id="数据后处理（YOLO层）"><a href="#数据后处理（YOLO层）" class="headerlink" title="数据后处理（YOLO层）"></a>数据后处理（YOLO层）</h2><p>　　在预测器之和有一个yolo结构，负责生成anchor以及<br>anchor的回归。<br>　　网络将输入图像划分为一个网格，每个网格单元称为一个cell，对于每个cell，网络将输出一组预测结果，每个cell在预测时会生成三个不同尺度的特征模板，即anchor，这三个anchor的尺度不同，是根据预测特征层的大小和原始输入图像的尺寸预定义的。生成多个anchor的目的是对图像中的目标进行多尺度的检测。（注意：一个目标可能会存在于多个cell中，如果某个object的中心落在这个网格中，那么这个网格就负责预测这个目标）</p>
+<h2 id="结构3"><a href="#结构3" class="headerlink" title="结构3"></a>结构3</h2><p>结构3，4，5为YOLOV3spp网络的三个预测特征层，用于预测不同尺度的目标，其中3预测尺度较大的目标，4预测中等的目标，5预测尺度较小的目标，5的感受野较小。<br>网络将提取到的特征图传递给特征预测层进行预测。由预测器预测回归参数以及类别和confidence。</p>
+<h2 id="数据后处理（YOLO层）"><a href="#数据后处理（YOLO层）" class="headerlink" title="数据后处理（YOLO层）"></a>数据后处理（YOLO层）</h2><p>　　在预测器之和有一个yolo结构，负责生成anchor以及anchor的回归。<br>　　网络将输入图像划分为一个网格，每个网格单元称为一个cell，对于每个cell，网络将输出一组预测结果，每个cell在预测时会生成三个不同尺度的特征模板，即anchor，这三个anchor的尺度不同，是根据预测特征层的大小和原始输入图像的尺寸预定义的。生成多个anchor的目的是对图像中的目标进行多尺度的检测。（注意：一个目标可能会存在于多个cell中，如果某个object的中心落在这个网格中，那么这个网格就负责预测这个目标）</p>
 <div align="center">
 <img src="/2023/06/26/test/image-2.png">
 </div>
@@ -262,8 +262,8 @@
 <p>1.无差别的提取图片中所有的Ground Truth（人工标注框）的四个角的坐标<br>2.计算每个Ground Truth的宽高<br>3.对Ground Truth的宽高进行聚类，得到九个anchor，每三个为一组，分别用来预测大中小三个尺度的目标。<br>4.衡量ground truth每一个anchor之间的差异，将Ground Truth分给与其差异值最小的anchor。传统的衡量差异的方法是采用欧式距离进行衡量，但是在这里效果不是很好，这里采用IOU衡量差异。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#cluster_w/h_matrix指anchor的宽高，box_w/h_matrix指GT的宽高 </span></span><br><span class="line"><span class="built_in">min</span> w matrix = np.minimum(cluster_w_matrix, box_w_ matrix </span><br><span class="line"><span class="built_in">min</span> h matrix = np.minimum(cluster_h_matrix, box_h_ matrixinter </span><br><span class="line">inter_area = np.multiply(min_w_matrix, min_h_ matrix)</span><br><span class="line">IOU = inter_area/(box_area + cluster_area - inter_ area</span><br></pre></td></tr></table></figure>
 <p>p: anchor只是先验框，要通过回归参数对先验框进行解码，才能得到真正的预测边界框位置（bounding box）。回归就是通过anchor 获得bounding box</p>
-<h1 id="划分正负样本"><a href="#划分正负样本" class="headerlink" title="划分正负样本"></a>划分正负样本</h1><p>　　正样本提供了目标的准确位置信息，帮助模型学习如何准确<br>的定位目标，同时帮助模型学习如何分辨不同种类的目标。<br>　　负样本代表了图像中的背景区域，帮助模型学习背景的视觉特征。正负样本的合理使用可以帮助模型更加的学习目标的定位分类，提高检测的准确性和鲁棒性。<br>　　正负样本的划分：理想状态下几个目标则有几个正负样本，将GT映射到grid cell中，其中心点落在哪个cell中，就用该cell预测该目标。一个cell有3个anchor，将与GT重合最大的anchor作为正样本，若不是最大，但iou&gt;0.5则丢弃该anchor，否则将其作为负样本。<br>p:在实际训练时正样本数量都比较少，会影响模型训练的效果，在可以采用将多个图片拼接在一起，对图片中的物体进行翻转等操作来增加正样本的数量。</p>
-<h1 id="回归"><a href="#回归" class="headerlink" title="回归"></a>回归</h1><p>　　上面说到anchor只是先验框，要通过回归参数对先验框进行解码，才能得到bounding box。那么如何进行回归呢？<br>　　在yolo层网络将输入图像划分为一个网格，每个网格单元称为一个cell，对于每个cell网络将输出一组预测结果。预测结果包括如下几个参数：</p>
+<h1 id="划分正负样本"><a href="#划分正负样本" class="headerlink" title="划分正负样本"></a>划分正负样本</h1><p>　　正样本提供了目标的准确位置信息，帮助模型学习如何准确的定位目标，同时帮助模型学习如何分辨不同种类的目标。<br>　　负样本代表了图像中的背景区域，帮助模型学习背景的视觉特征。正负样本的合理使用可以帮助模型更加的学习目标的定位分类，提高检测的准确性和鲁棒性。<br>　　正负样本的划分：理想状态下几个目标则有几个正负样本，将GT映射到grid cell中，其中心点落在哪个cell中，就用该cell预测该目标。一个cell有3个anchor，将与GT重合最大的anchor作为正样本，若不是最大，但iou&gt;0.5则丢弃该anchor，否则将其作为负样本。<br>p:在实际训练时正样本数量都比较少，会影响模型训练的效果，在可以采用将多个图片拼接在一起，对图片中的物体进行翻转等操作来增加正样本的数量。</p>
+<h1 id="回归"><a href="#回归" class="headerlink" title="回归"></a>回归</h1><p>上面说到anchor只是先验框，要通过回归参数对先验框进行解码，才能得到bounding box。那么如何进行回归呢？<br>在yolo层网络将输入图像划分为一个网格，每个网格单元称为一个cell，对于每个cell网络将输出一组预测结果。预测结果包括如下几个参数：</p>
 <div align="center">
 <img src="/2023/06/26/test/image-3.png">
 </div>

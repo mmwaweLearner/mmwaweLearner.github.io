@@ -162,6 +162,67 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/06/26/test/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/apple.gif">
+      <meta itemprop="name" content="melody">
+      <meta itemprop="description" content="无负今日">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ProgVisionary">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/06/26/test/" class="post-title-link" itemprop="url">test</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-06-26 10:30:19 / 修改时间：10:42:26" itemprop="dateCreated datePublished" datetime="2023-06-26T10:30:19+08:00">2023-06-26</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div align="center">
+<img src="/2023/06/26/test/image.png">
+</div>
+      
+    </div>
+
+    
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2023/06/24/yolov3spp/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -193,7 +254,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-06-26 14:18:54" itemprop="dateModified" datetime="2023-06-26T14:18:54+08:00">2023-06-26</time>
+                <time title="修改时间：2023-06-26 14:31:32" itemprop="dateModified" datetime="2023-06-26T14:31:32+08:00">2023-06-26</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -244,8 +305,12 @@
 <!-- /TOC -->
 
 <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>在这篇文章中主要讲解一下YOLOv3SPP网络的原理，以及部分有关目标检测的原理<br>p:有些地方讲述可能不太准确，仅做参考</p>
-<h1 id="YOLOV3spp网络结构"><a href="#YOLOV3spp网络结构" class="headerlink" title="YOLOV3spp网络结构"></a>YOLOV3spp网络结构</h1><p>![yolo网络结构][yolov3spp&#x2F;yolov3spp.png]<br>网络对图片的处理流程如下：<br><img src="/2023/06/24/yolov3spp/image.png" alt="处理流程"></p>
-<h2 id="结构1"><a href="#结构1" class="headerlink" title="结构1"></a>结构1</h2><p>Backbone: 采用Darknet53，输入图片经过backbone得到输出的特征矩阵。</p>
+<h1 id="YOLOV3spp网络结构"><a href="#YOLOV3spp网络结构" class="headerlink" title="YOLOV3spp网络结构"></a>YOLOV3spp网络结构</h1><div align="center">
+<img src="/2023/06/24/yolov3spp/yolov3spp.png">
+</div>网络对图片的处理流程如下：<p></p>
+<div align="center">
+<img src="/2023/06/24/yolov3spp/image.png">
+</div><a href="#结构1" class="headerlink" title="结构1"></a>结构1<p>Backbone: 采用Darknet53，输入图片经过backbone得到输出的特征矩阵。</p>
 <h2 id="结构2"><a href="#结构2" class="headerlink" title="结构2"></a>结构2</h2><p>SPP结构：将特征矩阵和经过下采样的三个矩阵进行拼接（注意，不是相加）<br>优点：spp是一种池化操作，用于处理特征图的不同空间大小。其优点是可以融合不同尺度的特征信息，使网络更容易得到收敛。</p>
 <h2 id="结构3"><a href="#结构3" class="headerlink" title="结构3"></a>结构3</h2><p>　　结构3，4，5为YOLOV3spp网络的三个预测特征层，用于预<br>测不同尺度的目标，其中3预测尺度较大的目标，4预测中等的目标，5预测尺度较小的目标，5的感受野较小。<br>　　网络将提取到的特征图传递给特征预测层进行预测。由预<br>测器预测回归参数以及类别和confidence。</p>
 <h2 id="数据后处理（YOLO层）"><a href="#数据后处理（YOLO层）" class="headerlink" title="数据后处理（YOLO层）"></a>数据后处理（YOLO层）</h2><p>　　在预测器之和有一个yolo结构，负责生成anchor以及<br>anchor的回归。<br>　　网络将输入图像划分为一个网格，每个网格单元称为一个cell，对于每个cell，网络将输出一组预测结果，每个cell在预测时会生成三个不同尺度的特征模板，即anchor，这三个anchor的尺度不同，是根据预测特征层的大小和原始输入图像的尺寸预定义的。生成多个anchor的目的是对图像中的目标进行多尺度的检测。（注意：一个目标可能会存在于多个cell中，如果某个object的中心落在这个网格中，那么这个网格就负责预测这个目标）<br><img src="/2023/06/24/yolov3spp/image-2.png" alt="grid cell"></p>
@@ -420,7 +485,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">2</span>
+          <span class="site-state-item-count">3</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
